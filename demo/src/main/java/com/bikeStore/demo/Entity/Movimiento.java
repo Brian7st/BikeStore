@@ -1,6 +1,7 @@
 package com.bikeStore.demo.Entity;
 
 
+import com.bikeStore.demo.Enums.TipoMovimiento;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

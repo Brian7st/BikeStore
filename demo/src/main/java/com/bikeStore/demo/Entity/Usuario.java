@@ -9,10 +9,14 @@ public class Usuario {
     @Id // CLAVE PRIMARIA
     @GeneratedValue(strategy = GenerationType.IDENTITY) // ES EL AUTO INCREMENTABLE
     @Column
+
     private Integer IdUsuario;
+
     private String usuario;
+
     @Column(unique = true)
     private String document;
+
     private String telefono;
 
 }
