@@ -3,18 +3,15 @@ package com.bikeStore.demo.Entity;
 
 import com.bikeStore.demo.Enums.Tipo;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Setter @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Bicicleta")
+
 public class Bicicleta {
 
     @Id

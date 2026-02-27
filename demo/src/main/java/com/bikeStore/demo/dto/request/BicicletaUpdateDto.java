@@ -5,18 +5,14 @@ import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
-public record BicicletaDtoRequest(
-        @NotBlank(message = "El codigo es obligatorio")
-        String codigo,
-
+public record BicicletaUpdateDto(
         @Size(min = 2, max = 30)
         String marca,
         String modelo,
-
-        @NotNull
         Tipo tipo,
-
         @Positive(message = "El precio debe ser mayor a cero")
-        BigDecimal valorUnitario
-
-) {}
+        BigDecimal valorUnitario,
+        @Min(0)
+        int stock
+) {
+}
