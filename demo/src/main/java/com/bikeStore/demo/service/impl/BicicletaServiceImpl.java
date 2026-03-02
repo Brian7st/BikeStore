@@ -1,4 +1,4 @@
-package com.bikeStore.demo.service;
+package com.bikeStore.demo.service.impl;
 
 
 import com.bikeStore.demo.Entity.Bicicleta;
@@ -7,6 +7,7 @@ import com.bikeStore.demo.dto.request.BicicletaUpdateDto;
 import com.bikeStore.demo.dto.response.BicicletaDtoResponse;
 import com.bikeStore.demo.mapper.BicicletaMapper;
 import com.bikeStore.demo.repository.BicicletaRepository;
+import com.bikeStore.demo.service.IBicicletaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +16,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BicicletaService {
+public class BicicletaServiceImpl implements IBicicletaService {
     private final BicicletaRepository bicicletaRepository;
     private final BicicletaMapper bicicletaMapper;
 
-
+    @Override
     @Transactional
     public BicicletaDtoResponse crearBicicleta(BicicletaDtoRequest dto){
 
@@ -32,6 +33,7 @@ public class BicicletaService {
         return  bicicletaMapper.toResponseDto(guardar);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public BicicletaDtoResponse buscarId(Integer id){
         return bicicletaRepository.findById(id)
@@ -39,6 +41,7 @@ public class BicicletaService {
                 .orElseThrow(() -> new RuntimeException("No se encontro una bicicleta con el id " + id));
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<BicicletaDtoResponse> listarTodo(){
         return bicicletaRepository.findActivoTrue()
@@ -46,6 +49,7 @@ public class BicicletaService {
                 .toList();
     }
 
+    @Override
     @Transactional
     public  BicicletaDtoResponse actualizarBicicleta(Integer id, BicicletaUpdateDto dto){
 
@@ -59,6 +63,7 @@ public class BicicletaService {
         return bicicletaMapper.toResponseDto(actualizada);
     }
 
+    @Override
     @Transactional
     public void eliminarBicicleta(Integer id){
         Bicicleta bicicleta = bicicletaRepository.findById(id).orElseThrow(() -> new RuntimeException("No se puede eliminar: Bicicleta no encontrada por el id " + id));

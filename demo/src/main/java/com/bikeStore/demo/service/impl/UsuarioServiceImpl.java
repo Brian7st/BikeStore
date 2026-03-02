@@ -1,23 +1,27 @@
-package com.bikeStore.demo.service;
+package com.bikeStore.demo.service.impl;
 
 import com.bikeStore.demo.Entity.Usuario;
 import com.bikeStore.demo.dto.request.UsuarioDtoRequest;
 import com.bikeStore.demo.dto.response.UsuarioDtoResponse;
 import com.bikeStore.demo.mapper.UsuarioMapper;
 import com.bikeStore.demo.repository.UsuarioRepository;
+import com.bikeStore.demo.service.IUsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UsuarioService {
+public class UsuarioServiceImpl implements IUsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
 
     // Crear usuario
+    @Override
+    @Transactional
     public UsuarioDtoResponse crear(UsuarioDtoRequest dto){
         Usuario usuario = usuarioMapper.toEntity(dto);
         Usuario guardado = usuarioRepository.save(usuario);
@@ -25,6 +29,8 @@ public class UsuarioService {
     }
 
     //Listar todos
+    @Override
+    @Transactional(readOnly = true)
     public List<UsuarioDtoResponse> listarTodos(){
         return usuarioRepository.findAll()
                 .stream()
@@ -32,6 +38,8 @@ public class UsuarioService {
                 .toList();
     }
     // Buscar por ID
+    @Override
+    @Transactional(readOnly = true)
     public UsuarioDtoResponse buscarPorId(Integer id){
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
@@ -39,6 +47,8 @@ public class UsuarioService {
     }
 
     // Actualizar
+    @Override
+    @Transactional
     public UsuarioDtoResponse actualizar (Integer id, UsuarioDtoRequest dto){
         Usuario existente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
@@ -50,6 +60,8 @@ public class UsuarioService {
     }
 
     // Eliminar
+    @Override
+    @Transactional
     public void eliminar(Integer id){
         if (!usuarioRepository.existsById(id)){
             throw new RuntimeException("usuario no encontrado con ID: " + id);

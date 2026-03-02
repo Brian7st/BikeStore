@@ -4,8 +4,9 @@ import com.bikeStore.demo.documentacionSwagger.IBicicletaSwagger;
 import com.bikeStore.demo.dto.request.BicicletaDtoRequest;
 import com.bikeStore.demo.dto.request.BicicletaUpdateDto;
 import com.bikeStore.demo.dto.response.BicicletaDtoResponse;
-import com.bikeStore.demo.service.BicicletaService;
 
+import com.bikeStore.demo.service.IBicicletaService;
+import com.bikeStore.demo.service.impl.BicicletaServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BicicletaController implements IBicicletaSwagger {
 
-    private final BicicletaService service;
+    private final IBicicletaService service;
 
 
     @Override
