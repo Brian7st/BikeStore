@@ -1,9 +1,9 @@
 package com.bikeStore.demo.controller;
 
-import com.bikeStore.demo.Entity.Movimiento;
 import com.bikeStore.demo.dto.request.MovimientoDtoResquest;
 import com.bikeStore.demo.dto.response.MovimientoDtoResponse;
-import com.bikeStore.demo.service.MovimientoService;
+import com.bikeStore.demo.service.IMovimientoService;
+import com.bikeStore.demo.service.impl.MovimientoServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MovimientoController {
 
-    private final MovimientoService movimientoService;
+    private final IMovimientoService movimientoService;
 
     // POST /api/movimientos  → registrar entrada o salida
     @PostMapping

@@ -1,4 +1,4 @@
-package com.bikeStore.demo.service;
+package com.bikeStore.demo.service.impl;
 
 
 import com.bikeStore.demo.Entity.Bicicleta;
@@ -11,16 +11,18 @@ import com.bikeStore.demo.mapper.MovimientoMapper;
 import com.bikeStore.demo.repository.BicicletaRepository;
 import com.bikeStore.demo.repository.MovimientoRepository;
 import com.bikeStore.demo.repository.UsuarioRepository;
-import jakarta.transaction.Transactional;
+import com.bikeStore.demo.service.IMovimientoService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MovimientoService {
+public class MovimientoServiceImpl implements IMovimientoService {
 
     private final MovimientoRepository movimientoRepository;
     private final BicicletaRepository biciletaRepository;
@@ -28,6 +30,7 @@ public class MovimientoService {
     private final MovimientoMapper movimientoMapper;
 
     //Registrare movimiento (Entrada o salida) tambien actualizar stock
+    @Override
     @Transactional
     public MovimientoDtoResponse registrar(MovimientoDtoResquest dto){
         Bicicleta bicicleta = biciletaRepository.findById(dto.getIdBicicleta())
@@ -60,6 +63,8 @@ public class MovimientoService {
     }
 
     //Listar todos los movimientos
+    @Override
+    @Transactional(readOnly = true)
     public List<MovimientoDtoResponse> listarTodos(){
         return movimientoRepository.findAll()
                 .stream()
@@ -68,6 +73,8 @@ public class MovimientoService {
     }
 
     // Buscar movimiento por ID
+    @Override
+    @Transactional(readOnly = true)
     public MovimientoDtoResponse buscarPorId(Integer id){
         Movimiento movimiento = movimientoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Movimiento no encontrado por ID: " + id));

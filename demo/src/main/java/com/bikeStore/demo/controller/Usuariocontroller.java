@@ -3,10 +3,10 @@ package com.bikeStore.demo.controller;
 
 import com.bikeStore.demo.dto.request.UsuarioDtoRequest;
 import com.bikeStore.demo.dto.response.UsuarioDtoResponse;
-import com.bikeStore.demo.service.UsuarioService;
+import com.bikeStore.demo.service.IUsuarioService;
+import com.bikeStore.demo.service.impl.UsuarioServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Usuariocontroller {
 
-    private final UsuarioService usuarioService;
+    private final IUsuarioService usuarioService;
 
     @PostMapping
     public ResponseEntity<UsuarioDtoResponse> crear(@Valid @RequestBody UsuarioDtoRequest dto) {
