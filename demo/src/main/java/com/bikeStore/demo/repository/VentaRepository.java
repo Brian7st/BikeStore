@@ -5,9 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+
 @Repository
-public interface VentaRepository extends JpaRepository<Venta, Long> {
+public interface VentaRepository extends JpaRepository<Venta, UUID> {
     List<Venta> findByFecha(LocalDateTime fecha);
 
-    List<Venta> findByUsuario_IdUsuario(Long idUsuario);
+    List<Venta> findByUsuario_IdUsuario(UUID idUsuario);
 }
