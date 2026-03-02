@@ -12,4 +12,5 @@ public interface IBicicletaService {
     List<BicicletaDtoResponse> listarTodo();
     BicicletaDtoResponse actualizarBicicleta(Integer id, BicicletaUpdateDto dto);
     void eliminarBicicleta(Integer id);
+
 }
