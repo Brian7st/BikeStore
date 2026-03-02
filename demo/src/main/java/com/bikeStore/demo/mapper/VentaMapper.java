@@ -1,4 +1,4 @@
 package com.bikeStore.demo.mapper;
 
-public class VentaMapper  {
+public interface VentaMapper {
 }
