@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Setter @Getter
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class Bicicleta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_bicicleta")
-    private  Integer id;
+    private UUID id;
 
     @Column(name = "codigo", length = 30, nullable = false, unique = true)
     private  String codigo;

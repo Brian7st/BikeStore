@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "detalle_venta")
@@ -13,7 +14,7 @@ public class DetalleVenta {
     @GeneratedValue(strategy =
             GenerationType.IDENTITY)
     @Column(name = "id_detalle_venta")
-    private Long idDetalleVenta;
+    private UUID idDetalleVenta;
 
     @ManyToOne
     @JoinColumn(name = "id_venta",

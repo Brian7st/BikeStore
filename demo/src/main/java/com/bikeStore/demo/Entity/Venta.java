@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.math.BigDecimal;
+import java.util.UUID;
+
 @Entity
 @Table(name= "Venta")
 @Data
@@ -14,7 +16,7 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     @Column(name = "id_venta")
-    private Long idVenta;
+    private UUID idVenta;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)

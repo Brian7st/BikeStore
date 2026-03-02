@@ -3,17 +3,24 @@ package com.bikeStore.demo.Entity;
 
 import com.bikeStore.demo.Enums.TipoMovimiento;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table (name = "Movimiento")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movimiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_movimiento")
-    private Integer idMovimiento;
+    private UUID idMovimiento;
 
     @ManyToOne
     @JoinColumn(name = "id_bicicleta", nullable = false)
@@ -27,6 +34,9 @@ public class Movimiento {
     @Column(nullable = false)
     private TipoMovimiento tipo;
 
+    @Column(name = "cantidad", length = 30)
     private Integer cantidad;
+
+    @Column(name = "fecha")
     private LocalDateTime fecha;
 }
