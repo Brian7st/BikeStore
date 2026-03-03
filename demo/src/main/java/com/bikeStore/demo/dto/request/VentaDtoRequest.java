@@ -1,12 +1,11 @@
 package com.bikeStore.demo.dto.request;
 
-import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
-@Data
-public class VentaDtoRequest {
-    private Long idUsuario;
-    private LocalDateTime fecha;
-    private List<DetalleVentaDtoRequest> detalles;
+public record VentaDtoRequest(
+        UUID idUsuario,
+        LocalDateTime fecha,
+        List<DetalleVentaDtoRequest> detalles) {
 }
