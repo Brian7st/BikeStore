@@ -3,13 +3,21 @@ package com.bikeStore.demo.mapper;
 import com.bikeStore.demo.dto.request.DetalleVentaDtoRequest;
 import com.bikeStore.demo.dto.response.DetalleVentaDtoResponse;
 import com.bikeStore.demo.Entity.DetalleVenta;
-import org.springframework.stereotype.Component;
-import java.math.BigDecimal;
+import org.mapstruct.*;
 
-@Component
+
+@Mapper(componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)
+
 public interface DetalleVentaMapper {
-    public DetalleVenta toEntity(DetalleVentaDtoRequest){
-        if (request == null) return null;
-        DetalleVenta detalle = new DetalleVenta();
-    }
+    @Mapping(target = "idDetalleVenta", ignore = true)
+    @Mapping(target = "venta", ignore = true)
+    @Mapping(target = "bicicleta", ignore = true)
+    @Mapping(target = "totalDetalle", ignore = true)
+    DetalleVenta toEntity(DetalleVentaDtoRequest request);
+
+    @Mapping(source = "bicicleta.idBicicleta", target = "idBicicleta")
+    @Mapping(source = "bicicleta.marca", target = "nombreBicicleta")
+    DetalleVentaDtoResponse toResponseDTO(DetalleVenta entidad);
 }

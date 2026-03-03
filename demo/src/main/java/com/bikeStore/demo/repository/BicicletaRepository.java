@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface BicicletaRepository extends JpaRepository<Bicicleta, Integer> {
+
+public interface BicicletaRepository extends JpaRepository<Bicicleta, UUID> {
 
     Optional<Bicicleta> findByCodigo(String codigo);
     List<Bicicleta>findActivoTrue();
