@@ -6,7 +6,6 @@ import com.bikeStore.demo.dto.request.BicicletaUpdateDto;
 import com.bikeStore.demo.dto.response.BicicletaDtoResponse;
 
 import com.bikeStore.demo.service.IBicicletaService;
-import com.bikeStore.demo.service.impl.BicicletaServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/v1/bicicletas")
+@RequestMapping("/api/bicicletas")
 @RequiredArgsConstructor
 public class BicicletaController implements IBicicletaSwagger {
 
@@ -37,7 +36,7 @@ public class BicicletaController implements IBicicletaSwagger {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<BicicletaDtoResponse> obtenerPorIdBicicleta(Integer id){
+    public ResponseEntity<BicicletaDtoResponse> obtenerPorIdBicicleta(@PathVariable Integer id){
         return ResponseEntity.ok(service.buscarId(id));
     }
 
