@@ -12,13 +12,12 @@ import com.bikeStore.demo.repository.BicicletaRepository;
 import com.bikeStore.demo.repository.MovimientoRepository;
 import com.bikeStore.demo.repository.UsuarioRepository;
 import com.bikeStore.demo.service.IMovimientoService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -75,7 +74,7 @@ public class MovimientoServiceImpl implements IMovimientoService {
     // Buscar movimiento por ID
     @Override
     @Transactional(readOnly = true)
-    public MovimientoDtoResponse buscarPorId(Integer id){
+    public MovimientoDtoResponse buscarPorId(UUID id){
         Movimiento movimiento = movimientoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Movimiento no encontrado por ID: " + id));
         return movimientoMapper.toResponseDto(movimiento);
