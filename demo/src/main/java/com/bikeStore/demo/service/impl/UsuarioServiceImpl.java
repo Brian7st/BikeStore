@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +41,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     // Buscar por ID
     @Override
     @Transactional(readOnly = true)
-    public UsuarioDtoResponse buscarPorId(Integer id){
+    public UsuarioDtoResponse buscarPorId(UUID id){
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
         return usuarioMapper.toResponseDto(usuario);
@@ -49,11 +50,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
     // Actualizar
     @Override
     @Transactional
-    public UsuarioDtoResponse actualizar (Integer id, UsuarioDtoRequest dto){
+    public UsuarioDtoResponse actualizar (UUID id, UsuarioDtoRequest dto){
         Usuario existente = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
         existente.setUsuario(dto.usuario());
-        existente.setPassoword(dto.password());
+        existente.setPassword(dto.password());
         existente.setDocument(dto.document());
         existente.setTelefono(dto.telefono());
         return usuarioMapper.toResponseDto(usuarioRepository.save(existente));
@@ -62,10 +63,17 @@ public class UsuarioServiceImpl implements IUsuarioService {
     // Eliminar
     @Override
     @Transactional
-    public void eliminar(Integer id){
+    public void eliminar(UUID id){
         if (!usuarioRepository.existsById(id)){
             throw new RuntimeException("usuario no encontrado con ID: " + id);
         }
         usuarioRepository.deleteById(id);
+    }
+    @Transactional
+    public UsuarioDtoResponse cambiarEstado(UUID id, boolean activo) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+        usuario.setActivo(activo);
+        return usuarioMapper.toResponseDto(usuarioRepository.save(usuario));
     }
 }
