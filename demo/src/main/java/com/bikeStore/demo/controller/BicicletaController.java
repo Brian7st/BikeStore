@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -36,19 +37,19 @@ public class BicicletaController implements IBicicletaSwagger {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<BicicletaDtoResponse> obtenerPorIdBicicleta(@PathVariable Integer id){
+    public ResponseEntity<BicicletaDtoResponse> obtenerPorIdBicicleta(@PathVariable UUID id){
         return ResponseEntity.ok(service.buscarId(id));
     }
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<BicicletaDtoResponse> actualizarBicicleta(Integer id,@RequestBody BicicletaUpdateDto request){
+    public ResponseEntity<BicicletaDtoResponse> actualizarBicicleta(UUID id,@RequestBody BicicletaUpdateDto request){
         return ResponseEntity.ok(service.actualizarBicicleta(id, request));
     }
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarBicicleta(Integer id){
+    public ResponseEntity<Void> eliminarBicicleta(UUID id){
         service.eliminarBicicleta(id);
         return ResponseEntity.noContent().build();
     }

@@ -13,4 +13,6 @@ public interface BicicletaRepository extends JpaRepository<Bicicleta, UUID> {
 
     Optional<Bicicleta> findByCodigo(String codigo);
     List<Bicicleta>findActivoTrue();
+
+    boolean existsByCodigo(String codigo);
 }
