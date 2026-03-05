@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class BicicletaServiceImpl implements IBicicletaService {
     @Transactional
     public BicicletaDtoResponse crearBicicleta(BicicletaDtoRequest dto){
 
-        if(bicicletaRepository.findByCodigo(dto.codigo())){
+        if(bicicletaRepository.existsByCodigo(dto.codigo())){
             throw  new RuntimeException("El codigo " + dto.codigo() + " ya esta en uso");
         }
 
@@ -35,7 +36,7 @@ public class BicicletaServiceImpl implements IBicicletaService {
 
     @Override
     @Transactional(readOnly = true)
-    public BicicletaDtoResponse buscarId(Integer id){
+    public BicicletaDtoResponse buscarId(UUID id){
         return bicicletaRepository.findById(id)
                 .map(bicicletaMapper::toResponseDto)
                 .orElseThrow(() -> new RuntimeException("No se encontro una bicicleta con el id " + id));
@@ -51,7 +52,7 @@ public class BicicletaServiceImpl implements IBicicletaService {
 
     @Override
     @Transactional
-    public  BicicletaDtoResponse actualizarBicicleta(Integer id, BicicletaUpdateDto dto){
+    public  BicicletaDtoResponse actualizarBicicleta(UUID id, BicicletaUpdateDto dto){
 
         Bicicleta bicicletaExistente = bicicletaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No se encontró la bicicleta con ID: " + id));
@@ -65,7 +66,7 @@ public class BicicletaServiceImpl implements IBicicletaService {
 
     @Override
     @Transactional
-    public void eliminarBicicleta(Integer id){
+    public void eliminarBicicleta(UUID id){
         Bicicleta bicicleta = bicicletaRepository.findById(id).orElseThrow(() -> new RuntimeException("No se puede eliminar: Bicicleta no encontrada por el id " + id));
         bicicleta.setActivo(false);
         bicicletaRepository.save(bicicleta);

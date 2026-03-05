@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Tag(name = "Bicicletas", description = "Operaciones para la gestión del inventario de bicicletas")
@@ -39,14 +40,14 @@ public interface IBicicletaSwagger {
             @ApiResponse(responseCode = "404", description = "Bicicleta no encontrada")
     })
     ResponseEntity<BicicletaDtoResponse> actualizarBicicleta(
-            @Parameter(description = "ID de la bicicleta", example = "1") @PathVariable Integer id,
+            @Parameter(description = "ID de la bicicleta", example = "1") @PathVariable UUID id,
             @RequestBody BicicletaUpdateDto request
     );
 
     @Operation(summary = "Eliminación lógica de una bicicleta")
     @ApiResponse(responseCode = "204", description = "Bicicleta desactivada correctamente")
     ResponseEntity<Void> eliminarBicicleta(
-            @Parameter(description = "ID de la bicicleta", example = "1") @PathVariable Integer id
+            @Parameter(description = "ID de la bicicleta", example = "1") @PathVariable UUID id
     );
 
     @Operation(summary = "Listar todas las bicicletas activas")
@@ -59,6 +60,6 @@ public interface IBicicletaSwagger {
             @ApiResponse(responseCode = "404", description = "Bicicleta no encontrada")
     })
     ResponseEntity<BicicletaDtoResponse> obtenerPorIdBicicleta(
-            @Parameter(description = "ID único de la bicicleta", example = "1") @PathVariable Integer id
+            @Parameter(description = "ID único de la bicicleta", example = "1") @PathVariable UUID id
     );
 }
