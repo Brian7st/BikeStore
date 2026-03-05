@@ -6,18 +6,22 @@ import com.bikeStore.demo.Enums.TipoMovimiento;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record MovimientoDtoResponse(
-        Integer idMovimiento,
+        UUID idMovimiento,
 
-        String idbicicleta,
 
-        Integer idusuario,
+        UUID idBicicleta,
+        String codigoBicileta,
+        String marcaBicicleta,
+
+
+        Integer idUsuario,
+        String nombreUsuario,
 
         TipoMovimiento tipo,
-
         Integer cantidad,
-
         LocalDateTime fecha
 ) {
 }

@@ -1,11 +1,9 @@
 package com.bikeStore.demo.dto.request;
-import lombok.Data;
 
 import java.math.BigDecimal;
-
-@Data
-public class DetalleVentaDtoRequest {
-    private Long idBicicleta;
-    private Integer cantidad;
-    private BigDecimal precioUnitario;
+import java.util.UUID;
+public record DetalleVentaDtoRequest(
+        UUID idBicicleta,
+        Integer cantidad,
+        BigDecimal precioUnitario) {
 }

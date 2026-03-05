@@ -32,7 +32,7 @@ public class VentaServiceImpl implements IVentaService{
 
         // 1. Validar Usuario (Convertimos el ID del DTO a UUID)
         // Asumiendo que request.getIdUsuario() devuelve un String o un objeto que represente el UUID
-        UUID usuarioId = UUID.fromString(request.getIdUsuario().toString());
+        UUID usuarioId = UUID.fromString(request.idUsuario().toString());
         Usuario usuario = usuarioRepo.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -42,9 +42,9 @@ public class VentaServiceImpl implements IVentaService{
         venta.setDetalles(new ArrayList<>());
 
         // 2. Procesar Detalles
-        request.getDetalles().forEach(detReq -> {
+        request.detalles().forEach(detReq -> {
             // Convertimos el ID de la bicicleta que viene en el detalle a UUID
-            UUID biciId = UUID.fromString(detReq.getIdBicicleta().toString());
+            UUID biciId = UUID.fromString(detReq.idBicicleta().toString());
 
             Bicicleta bici = biciRepo.findById(biciId)
                     .orElseThrow(() -> new RuntimeException("Bicicleta no encontrada"));
@@ -52,7 +52,7 @@ public class VentaServiceImpl implements IVentaService{
             DetalleVenta detalle = new DetalleVenta();
             detalle.setVenta(venta);
             detalle.setBicicleta(bici);
-            detalle.setCantidad(detReq.getCantidad());
+            detalle.setCantidad(detReq.cantidad());
             detalle.setPrecioUnitario(bici.getValorUnitario());
 
             BigDecimal subtotal = detalle.getPrecioUnitario().multiply(new BigDecimal(detalle.getCantidad()));

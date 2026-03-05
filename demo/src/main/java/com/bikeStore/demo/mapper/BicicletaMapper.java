@@ -1,6 +1,5 @@
 package com.bikeStore.demo.mapper;
 
-
 import com.bikeStore.demo.Entity.Bicicleta;
 import com.bikeStore.demo.dto.request.BicicletaDtoRequest;
 import com.bikeStore.demo.dto.request.BicicletaUpdateDto;
