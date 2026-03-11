@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Movimiento {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id_movimiento")
     private UUID idMovimiento;
 
