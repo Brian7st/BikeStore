@@ -52,7 +52,7 @@ public class BicicletaServiceImpl implements IBicicletaService {
 
     @Override
     @Transactional
-    public  BicicletaDtoResponse actualizarBicicleta(UUID id, BicicletaUpdateDto dto){
+    public  BicicletaDtoResponse actualizarBicicleta(Integer id, BicicletaUpdateDto dto){
 
         Bicicleta bicicletaExistente = bicicletaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No se encontró la bicicleta con ID: " + id));

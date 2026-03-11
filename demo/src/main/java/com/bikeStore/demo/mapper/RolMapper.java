@@ -14,10 +14,10 @@ public interface RolMapper {
 
     @Mapping(target = "idRol", ignore = true)
     @Mapping(target = "activo",constant = "true")
-    @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "usuarios", ignore = true)
     Rol toEntity(RolDtoRequest dto);
 
-    @Mapping(target = "tottalUsuarios", expression = "java(rol.getUsuarios() != null ? rol.getUsuarios().size() : 0)")
+    @Mapping(target = "totalUsuarios", expression = "java(rol.getUsuarios() != null ? rol.getUsuarios().size() : 0)")
     RolDtoResponse toResponseDto(Rol rol);
 
     @Mapping(target = "idRol", ignore = true)

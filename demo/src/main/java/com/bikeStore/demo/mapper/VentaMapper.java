@@ -15,6 +15,6 @@ public interface VentaMapper {
     Venta toEntity(VentaDtoRequest request);
 
     @Mapping(source = "usuario.idUsuario", target = "idUsuario")
-    @Mapping(source = "usuario.nombre", target = "nombreUsuario")
+    @Mapping(source = "usuario.usuario", target = "nombreUsuario")
     VentaDtoResponse toResponseDTO(Venta entidad);
 }

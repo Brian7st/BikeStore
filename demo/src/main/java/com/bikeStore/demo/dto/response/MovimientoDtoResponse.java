@@ -10,16 +10,11 @@ import java.util.UUID;
 
 public record MovimientoDtoResponse(
         UUID idMovimiento,
-
-
         UUID idBicicleta,
         String codigoBicileta,
         String marcaBicicleta,
-
-
-        Integer idUsuario,
+        UUID idUsuario,
         String nombreUsuario,
-
         TipoMovimiento tipo,
         Integer cantidad,
         LocalDateTime fecha
