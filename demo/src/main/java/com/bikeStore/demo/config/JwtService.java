@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class JwtService {
@@ -24,13 +21,13 @@ public class JwtService {
     @Value("${refresh-threshold}")
     private Long refreshThresholdMs;
 
-    private SecretKey getSigningKey(){
+    private SecretKey getSigningKey() {
         byte[] keyBytes = Base64.getDecoder().decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
 
-    private  String buildToken(Map<String, Object> claims, String subject, Long expiractionMs){
+    private String buildToken(Map<String, Object> claims, String subject, Long expiractionMs) {
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -41,26 +38,65 @@ public class JwtService {
                 .compact();
     }
 
-    private String generateToken(Long userId, Long rolId, String userName){
+    public String generateToken(UUID userId, UUID rolId, String userName, String roleName) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
+        claims.put("userId", userId.toString());
+        claims.put("rolId", rolId.toString());
         claims.put("UserName", userName);
+        claims.put("roles", Collections.singletonList("ROLE_" + roleName));
 
         return buildToken(claims, userName, tokenExpiractionMs);
     }
 
+    public <T> T extractClaim(String token, java.util.function.Function<Claims, T> claimsResolver) {
+        final Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claimsResolver.apply(claims);
+    }
 
-
-    public boolean isTokenValid(String token){
+    public boolean isTokenValid(String token) {
         try {
             Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token);
             return true;
-        }catch (JwtException e){
+        } catch (JwtException e) {
             e.printStackTrace();
             return false;
         }
     }
 
+    public UUID extractUserId(String token) {
+        String userIdStr = extractClaim(token, claims -> claims.get("userId", String.class));
+        return UUID.fromString(userIdStr);
+    }
 
+    public UUID extractRolId(String token) {
+        String rolIdStr = extractClaim(token, claims -> claims.get("rolId", String.class));
+        return UUID.fromString(rolIdStr);
+    }
 
+    public String extractUserName(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(String token) {
+        return extractClaim(token, claims -> {
+            Object roles = claims.get("roles");
+            if (roles instanceof List) {
+                return (List<String>) roles;
+            }
+            return Collections.emptyList();
+        });
+
+    }
 }
+
+

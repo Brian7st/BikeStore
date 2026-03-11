@@ -14,15 +14,15 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Usuario {
 
-    @Id // CLAVE PRIMARIA
-    @GeneratedValue(strategy = GenerationType.UUID) // ES EL AUTO INCREMENTABLE
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column
-    private UUID IdUsuario;
+    private UUID idUsuario;
 
     @Column ( name = "Usuario", length = 50, nullable = false)
-    private String usuario;
+    private String userName;
 
-    @Column(name = "passoword", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(unique = true, nullable = false, length = 20)
@@ -34,7 +34,7 @@ public class Usuario {
     @Column(name = "activo", nullable = false)
     private boolean activo = true;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol",nullable = false)
     private Rol rol;
 

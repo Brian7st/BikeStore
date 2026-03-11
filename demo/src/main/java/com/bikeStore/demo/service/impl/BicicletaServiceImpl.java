@@ -18,19 +18,20 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class BicicletaServiceImpl implements IBicicletaService {
-
     private final BicicletaRepository bicicletaRepository;
     private final BicicletaMapper bicicletaMapper;
 
     @Override
     @Transactional
-    public BicicletaDtoResponse crearBicicleta(BicicletaDtoRequest dto) {
-        // ✅ findByCodigo devuelve Optional<Bicicleta>, usamos isPresent()
-        if (bicicletaRepository.findByCodigo(dto.codigo()).isPresent()) {
-            throw new RuntimeException("El codigo " + dto.codigo() + " ya esta en uso");
+    public BicicletaDtoResponse crearBicicleta(BicicletaDtoRequest dto){
+
+        if(bicicletaRepository.existsByCodigo(dto.codigo())){
+            throw  new RuntimeException("El codigo " + dto.codigo() + " ya esta en uso");
         }
+
         Bicicleta bicicleta = bicicletaMapper.toEntity(dto);
-        return bicicletaMapper.toResponseDto(bicicletaRepository.save(bicicleta));
+        Bicicleta guardar = bicicletaRepository.save(bicicleta);
+        return  bicicletaMapper.toResponseDto(guardar);
     }
 
     @Override
@@ -51,7 +52,7 @@ public class BicicletaServiceImpl implements IBicicletaService {
 
     @Override
     @Transactional
-    public  BicicletaDtoResponse actualizarBicicleta(UUID id, BicicletaUpdateDto dto){
+    public  BicicletaDtoResponse actualizarBicicleta(Integer id, BicicletaUpdateDto dto){
 
         Bicicleta bicicletaExistente = bicicletaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No se encontró la bicicleta con ID: " + id));
@@ -65,10 +66,10 @@ public class BicicletaServiceImpl implements IBicicletaService {
 
     @Override
     @Transactional
-    public void eliminarBicicleta(UUID id) { // ✅ UUID
-        Bicicleta bicicleta = bicicletaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bicicleta no encontrada con id: " + id));
+    public void eliminarBicicleta(UUID id){
+        Bicicleta bicicleta = bicicletaRepository.findById(id).orElseThrow(() -> new RuntimeException("No se puede eliminar: Bicicleta no encontrada por el id " + id));
         bicicleta.setActivo(false);
         bicicletaRepository.save(bicicleta);
     }
+
 }
