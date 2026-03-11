@@ -6,7 +6,7 @@ import com.bikeStore.demo.dto.response.RolDtoResponse;
 import java.util.List;
 import java.util.UUID;
 
-public interface IRolService {
+public interface IRolService  {
     // Operaciones de Creación y Actualización
     RolDtoResponse crear(RolDtoRequest dto);
     RolDtoResponse actualizar(UUID id, RolDtoRequest dto);

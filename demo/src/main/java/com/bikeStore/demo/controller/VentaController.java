@@ -17,17 +17,7 @@ public class VentaController implements IVentaSwagger{
     private final IVentaService service;
 
     @Override
-    public ResponseEntity<VentaDtoResponse> registrarVenta(VentaDtoResponse response) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<VentaDtoResponse> registrarVenta() {
-        return null;
-    }
-
     @PostMapping
-    @Override
     public ResponseEntity<VentaDtoResponse> registrarVenta(@RequestBody VentaDtoRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.registrarVenta(request));
     }

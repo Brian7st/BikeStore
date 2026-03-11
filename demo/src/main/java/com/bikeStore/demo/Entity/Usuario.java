@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Usuario {
 
     @Id // CLAVE PRIMARIA
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ES EL AUTO INCREMENTABLE
+    @GeneratedValue(strategy = GenerationType.UUID) // ES EL AUTO INCREMENTABLE
     @Column
     private UUID IdUsuario;
 

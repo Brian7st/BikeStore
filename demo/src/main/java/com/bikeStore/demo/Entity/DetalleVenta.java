@@ -12,7 +12,7 @@ import java.util.UUID;
 public class DetalleVenta {
     @Id
     @GeneratedValue(strategy =
-            GenerationType.IDENTITY)
+            GenerationType.UUID)
     @Column(name = "id_detalle_venta")
     private UUID idDetalleVenta;
 

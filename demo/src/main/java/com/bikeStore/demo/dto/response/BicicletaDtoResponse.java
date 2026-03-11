@@ -3,9 +3,10 @@ package com.bikeStore.demo.dto.response;
 import com.bikeStore.demo.Enums.Tipo;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record BicicletaDtoResponse(
-   Integer id,
+   UUID id,
    String codigo,
    String marca,
    String modelo,

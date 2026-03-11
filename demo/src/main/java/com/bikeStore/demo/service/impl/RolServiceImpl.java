@@ -5,6 +5,7 @@ import com.bikeStore.demo.dto.request.RolDtoRequest;
 import com.bikeStore.demo.dto.response.RolDtoResponse;
 import com.bikeStore.demo.mapper.RolMapper;
 import com.bikeStore.demo.repository.RolRepository;
+import com.bikeStore.demo.service.IRolService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class RolServiceImpl {
+public class RolServiceImpl implements IRolService {
 
     private final RolRepository rolRepository;
     private final RolMapper rolMapper;
