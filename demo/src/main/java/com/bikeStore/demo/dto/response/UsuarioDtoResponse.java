@@ -5,7 +5,7 @@ import java.util.UUID;
 public record UsuarioDtoResponse(
 
         UUID idUsuario,
-        String usuario,
+        String userName,
         String document,
         String telefono
 ) {

@@ -12,7 +12,7 @@ import java.util.UUID;
 public interface BicicletaRepository extends JpaRepository<Bicicleta, UUID> {
 
     Optional<Bicicleta> findByCodigo(String codigo);
-    List<Bicicleta>findActivoTrue();
+    List<Bicicleta>findByActivoTrue();
 
     boolean existsByCodigo(String codigo);
 }

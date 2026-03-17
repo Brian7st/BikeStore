@@ -10,29 +10,31 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final UsuarioRepository usuarioRepository;
     private final JwtService jwtService;
     private final UsuarioMapper usuarioMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody com.bikeStore.demo.dto.request.LoginRequest request) {
 
-
-        Usuario usuario = usuarioRepository.findByUsername(request.userName())
+        Usuario usuario = usuarioRepository.findByUserName(request.userName())
                 .orElseThrow(() -> new RuntimeException("Credenciales incorrectas"));
 
 
-        if (!usuario.isActivo() || !usuario.getPassword().equals(request.password())) {
+        boolean passwordValida = passwordEncoder.matches(request.password(), usuario.getPassword());
+
+        if (!usuario.isActivo() || !passwordValida) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
 
         String token = jwtService.generateToken(
                 usuario.getIdUsuario(),
@@ -41,9 +43,7 @@ public class AuthController {
                 usuario.getRol().getNombre()
         );
 
-
         LoginResponseDTO response = usuarioMapper.toAuthResponse(usuario, token);
-
         return ResponseEntity.ok(response);
     }
 }

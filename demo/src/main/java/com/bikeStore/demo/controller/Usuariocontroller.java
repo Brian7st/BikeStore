@@ -23,9 +23,9 @@ public class Usuariocontroller implements IUsuarioSwagger {
     private final IUsuarioService usuarioService;
 
     @Override
-    @PostMapping
+    @PostMapping("/registro")
     public ResponseEntity<UsuarioDtoResponse> crear(@Valid @RequestBody UsuarioDtoRequest dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.crear(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.registrarUsuario(dto));
     }
     @Override
     @GetMapping
