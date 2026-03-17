@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IUsuarioService {
-    UsuarioDtoResponse crear(UsuarioDtoRequest dto);
+    UsuarioDtoResponse registrarUsuario(UsuarioDtoRequest dto);
     List<UsuarioDtoResponse> listarTodos();
     UsuarioDtoResponse buscarPorId(UUID id);
     UsuarioDtoResponse actualizar(UUID id, UsuarioDtoRequest dto);

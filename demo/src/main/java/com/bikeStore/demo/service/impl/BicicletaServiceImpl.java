@@ -45,14 +45,14 @@ public class BicicletaServiceImpl implements IBicicletaService {
     @Override
     @Transactional(readOnly = true)
     public List<BicicletaDtoResponse> listarTodo(){
-        return bicicletaRepository.findActivoTrue()
+        return bicicletaRepository.findByActivoTrue()
                 .stream().map(bicicletaMapper::toResponseDto)
                 .toList();
     }
 
     @Override
     @Transactional
-    public  BicicletaDtoResponse actualizarBicicleta(Integer id, BicicletaUpdateDto dto){
+    public  BicicletaDtoResponse actualizarBicicleta(UUID id, BicicletaUpdateDto dto){
 
         Bicicleta bicicletaExistente = bicicletaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No se encontró la bicicleta con ID: " + id));

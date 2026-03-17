@@ -12,7 +12,7 @@ public interface MovimientoMapper {
     @Mapping(source = "bicicleta.codigo", target = "codigoBicileta")
     @Mapping(source = "bicicleta.marca", target = "marcaBicicleta")
     @Mapping(source = "usuario.idUsuario", target = "idUsuario")
-    @Mapping(source = "usuario.usuario", target = "nombreUsuario")
+    @Mapping(source = "usuario.userName", target = "nombreUsuario")
 
     MovimientoDtoResponse toResponseDto(Movimiento movimiento);
 
