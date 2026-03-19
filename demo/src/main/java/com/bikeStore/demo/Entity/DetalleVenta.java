@@ -4,16 +4,18 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
+
+import com.bikeStore.demo.Entity.base.BaseEntity;
 
 @Entity
 @Table(name = "detalle_venta")
 @Data
-public class DetalleVenta {
-    @Id
-    @GeneratedValue(strategy =
-            GenerationType.IDENTITY)
-    @Column(name = "id_detalle_venta")
-    private Long idDetalleVenta;
+@AttributeOverride(name = "id", column = @Column(name = "id_detalle_venta"))
+public class DetalleVenta extends BaseEntity {
+
+    public UUID getIdDetalleVenta() { return super.getId(); }
+    public void setIdDetalleVenta(UUID id) { super.setId(id); }
 
     @ManyToOne
     @JoinColumn(name = "id_venta",

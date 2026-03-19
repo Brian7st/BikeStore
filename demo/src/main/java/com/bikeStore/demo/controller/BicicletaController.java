@@ -4,22 +4,23 @@ import com.bikeStore.demo.documentacionSwagger.IBicicletaSwagger;
 import com.bikeStore.demo.dto.request.BicicletaDtoRequest;
 import com.bikeStore.demo.dto.request.BicicletaUpdateDto;
 import com.bikeStore.demo.dto.response.BicicletaDtoResponse;
-import com.bikeStore.demo.service.BicicletaService;
 
+import com.bikeStore.demo.service.IBicicletaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/api/v1/bicicletas")
+@RequestMapping("/api/bicicletas")
 @RequiredArgsConstructor
 public class BicicletaController implements IBicicletaSwagger {
 
-    private final BicicletaService service;
+    private final IBicicletaService service;
 
 
     @Override
@@ -36,19 +37,19 @@ public class BicicletaController implements IBicicletaSwagger {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<BicicletaDtoResponse> obtenerPorIdBicicleta(Integer id){
+    public ResponseEntity<BicicletaDtoResponse> obtenerPorIdBicicleta(@PathVariable UUID id){
         return ResponseEntity.ok(service.buscarId(id));
     }
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<BicicletaDtoResponse> actualizarBicicleta(Integer id,@RequestBody BicicletaUpdateDto request){
+    public ResponseEntity<BicicletaDtoResponse> actualizarBicicleta(UUID id,@RequestBody BicicletaUpdateDto request){
         return ResponseEntity.ok(service.actualizarBicicleta(id, request));
     }
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarBicicleta(Integer id){
+    public ResponseEntity<Void> eliminarBicicleta(UUID id){
         service.eliminarBicicleta(id);
         return ResponseEntity.noContent().build();
     }

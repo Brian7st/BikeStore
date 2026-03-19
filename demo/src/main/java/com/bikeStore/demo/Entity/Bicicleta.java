@@ -6,18 +6,20 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
+
+import com.bikeStore.demo.Entity.base.BaseEntity;
 
 @Setter @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@AttributeOverride(name = "id", column = @Column(name = "id_bicicleta"))
+public class Bicicleta extends BaseEntity {
 
-public class Bicicleta {
+    public UUID getIdBicicleta() { return super.getId(); }
+    public void setIdBicicleta(UUID id) { super.setId(id); }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_bicicleta")
-    private  Integer id;
 
     @Column(name = "codigo", length = 30, nullable = false, unique = true)
     private  String codigo;
