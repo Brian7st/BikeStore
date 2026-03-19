@@ -1,9 +1,6 @@
 package com.bikeStore.demo.dto.response;
 
-import com.bikeStore.demo.Entity.Bicicleta;
-import com.bikeStore.demo.Entity.Usuario;
 import com.bikeStore.demo.Enums.TipoMovimiento;
-import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,6 +14,7 @@ public record MovimientoDtoResponse(
         String nombreUsuario,
         TipoMovimiento tipo,
         Integer cantidad,
-        LocalDateTime fecha
+        LocalDateTime fecha,
+        UUID idVenta          // null para ENTRADA, populated para SALIDA via Venta
 ) {
 }
