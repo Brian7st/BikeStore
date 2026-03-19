@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -39,11 +40,8 @@ public class JwtService {
                 .compact();
     }
 
-    public String generateToken(UUID userId, UUID rolId, String userName, String roleName) {
+    public String generateToken(String userName, String roleName) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId.toString());
-        claims.put("rolId", rolId.toString());
-        claims.put("UserName", userName);
         claims.put("roles", Collections.singletonList("ROLE_" + roleName));
 
         return buildToken(claims, userName, tokenExpiractionMs);
@@ -68,14 +66,17 @@ public class JwtService {
         }
     }
 
-    public UUID extractUserId(String token) {
-        String userIdStr = extractClaim(token, claims -> claims.get("userId", String.class));
-        return UUID.fromString(userIdStr);
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        try {
+            final String username = extractUserName(token);
+            return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        } catch (JwtException e) {
+            return false;
+        }
     }
 
-    public UUID extractRolId(String token) {
-        String rolIdStr = extractClaim(token, claims -> claims.get("rolId", String.class));
-        return UUID.fromString(rolIdStr);
+    private boolean isTokenExpired(String token) {
+        return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
     public String extractUserName(String token) {

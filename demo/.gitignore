@@ -30,3 +30,6 @@ out/
 /nbdist/
 /.nb-gradle/
 build/
+
+# --- Security Analysis ---
+SECURITY_FIXES.md

@@ -9,17 +9,18 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.UUID;
 
+import com.bikeStore.demo.Entity.base.BaseEntity;
+
 @Entity
 @Table(name = "rol")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Rol {
+@AttributeOverride(name = "id", column = @Column(name = "id_rol"))
+public class Rol extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_rol")
-    private UUID idRol;
+    public UUID getIdRol() { return super.getId(); }
+    public void setIdRol(UUID id) { super.setId(id); }
 
     //solo admin y empleado
     @Column(name = "nombre", length = 30, nullable = false, unique = true)
