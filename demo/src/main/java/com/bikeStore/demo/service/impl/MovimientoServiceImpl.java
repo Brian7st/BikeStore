@@ -1,9 +1,9 @@
 package com.bikeStore.demo.service.impl;
 
-
 import com.bikeStore.demo.Entity.Bicicleta;
 import com.bikeStore.demo.Entity.Movimiento;
 import com.bikeStore.demo.Entity.Usuario;
+import com.bikeStore.demo.Entity.Venta;
 import com.bikeStore.demo.Enums.TipoMovimiento;
 import com.bikeStore.demo.dto.request.MovimientoDtoResquest;
 import com.bikeStore.demo.dto.response.MovimientoDtoResponse;
@@ -28,43 +28,66 @@ public class MovimientoServiceImpl implements IMovimientoService {
     private final UsuarioRepository usuarioRepository;
     private final MovimientoMapper movimientoMapper;
 
-    //Registrare movimiento (Entrada o salida) tambien actualizar stock
+    /**
+     * Registra un movimiento manual de ENTRADA.
+     * Las SALIDAS se generan exclusivamente desde VentaServiceImpl.
+     * Si se intenta registrar una SALIDA manual, se lanza una excepcion.
+     */
     @Override
     @Transactional
-    public MovimientoDtoResponse registrar(MovimientoDtoResquest dto){
+    public MovimientoDtoResponse registrar(MovimientoDtoResquest dto) {
+
+        // Bloquear SALIDA manual: solo se permite desde una Venta
+        if (dto.getTipo() == TipoMovimiento.SALIDA) {
+            throw new RuntimeException(
+                "Las salidas de stock se registran automaticamente al crear una Venta. " +
+                "No se permite registrar una SALIDA de forma manual."
+            );
+        }
+
         Bicicleta bicicleta = biciletaRepository.findById(dto.getIdBicicleta())
                 .orElseThrow(() -> new RuntimeException("Bicicleta no encontrada con ID: " + dto.getIdBicicleta()));
 
         Usuario usuario = usuarioRepository.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new RuntimeException("usuario no encontrado con ID:" + dto.getIdUsuario()));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + dto.getIdUsuario()));
 
-        //Actualizar stock segun tipo de movimiento
-        if (dto.getTipo() == TipoMovimiento.ENTRADA){
-            bicicleta.setStock(bicicleta.getStock() + dto.getCantidad());
-        } else if (dto.getTipo() == TipoMovimiento.SALIDA) {
-            if (bicicleta.getStock() < dto.getCantidad()) {
-                throw new RuntimeException("Stick insuficiente. stock actual: " + bicicleta.getStock());
-            }
-            bicicleta.setStock(bicicleta.getStock() - dto.getCantidad());
-        }
-
+        // Solo ENTRADA: incrementar stock
+        bicicleta.setStock(bicicleta.getStock() + dto.getCantidad());
         biciletaRepository.save(bicicleta);
 
-        // Crear y guardar el movimiento
         Movimiento movimiento = new Movimiento();
         movimiento.setBicicleta(bicicleta);
         movimiento.setUsuario(usuario);
-        movimiento.setTipo(dto.getTipo());
+        movimiento.setTipo(TipoMovimiento.ENTRADA);
         movimiento.setCantidad(dto.getCantidad());
         movimiento.setFecha(LocalDateTime.now());
+        movimiento.setVenta(null); // ENTRADA nunca tiene venta asociada
 
         return movimientoMapper.toResponseDto(movimientoRepository.save(movimiento));
     }
 
-    //Listar todos los movimientos
+    /**
+     * Metodo interno llamado exclusivamente desde VentaServiceImpl.
+     * Crea un Movimiento de SALIDA vinculado a la Venta que lo origino.
+     * NO modifica el stock (VentaServiceImpl lo gestiona antes de llamar este metodo).
+     */
+    @Override
+    @Transactional
+    public void registrarSalida(Bicicleta bicicleta, Usuario usuario, int cantidad, Venta venta) {
+        Movimiento movimiento = new Movimiento();
+        movimiento.setBicicleta(bicicleta);
+        movimiento.setUsuario(usuario);
+        movimiento.setTipo(TipoMovimiento.SALIDA);
+        movimiento.setCantidad(cantidad);
+        movimiento.setFecha(LocalDateTime.now());
+        movimiento.setVenta(venta); // Clave: traza la SALIDA a la Venta que la origino
+        movimientoRepository.save(movimiento);
+    }
+
+    // Listar todos los movimientos
     @Override
     @Transactional(readOnly = true)
-    public List<MovimientoDtoResponse> listarTodos(){
+    public List<MovimientoDtoResponse> listarTodos() {
         return movimientoRepository.findAll()
                 .stream()
                 .map(movimientoMapper::toResponseDto)
@@ -74,7 +97,7 @@ public class MovimientoServiceImpl implements IMovimientoService {
     // Buscar movimiento por ID
     @Override
     @Transactional(readOnly = true)
-    public MovimientoDtoResponse buscarPorId(UUID id){
+    public MovimientoDtoResponse buscarPorId(UUID id) {
         Movimiento movimiento = movimientoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Movimiento no encontrado por ID: " + id));
         return movimientoMapper.toResponseDto(movimiento);
