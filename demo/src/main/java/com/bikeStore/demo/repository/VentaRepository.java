@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface VentaRepository extends JpaRepository<Venta, UUID> {
     List<Venta> findByFecha(LocalDateTime fecha);
 
-    List<Venta> findByUsuario_IdUsuario(UUID idUsuario);
+    List<Venta> findByUsuarioId(UUID idUsuario);
 }

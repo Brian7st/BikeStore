@@ -7,17 +7,19 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+import com.bikeStore.demo.Entity.base.BaseEntity;
+
 @Entity  // le dice a JPA QUE ES UNA TABLA
 @Table(name = "usuario")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
+@AttributeOverride(name = "id", column = @Column(name = "id_usuario"))
+public class Usuario extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column
-    private UUID idUsuario;
+    public UUID getIdUsuario() { return super.getId(); }
+    public void setIdUsuario(UUID id) { super.setId(id); }
+
 
     @Column ( name = "Usuario", length = 50, nullable = false)
     private String userName;

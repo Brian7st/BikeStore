@@ -10,17 +10,18 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.bikeStore.demo.Entity.base.BaseEntity;
+
 @Entity
 @Table (name = "Movimiento")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Movimiento {
+@AttributeOverride(name = "id", column = @Column(name = "id_movimiento"))
+public class Movimiento extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_movimiento")
-    private UUID idMovimiento;
+    public UUID getIdMovimiento() { return super.getId(); }
+    public void setIdMovimiento(UUID id) { super.setId(id); }
 
     @ManyToOne
     @JoinColumn(name = "id_bicicleta", nullable = false)

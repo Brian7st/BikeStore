@@ -22,10 +22,10 @@ public class DataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         // Crear roles si no existen
         if (rolRepository.findByNombre("ADMIN").isEmpty()) {
-            rolRepository.save(new Rol(null, "ADMIN", "Administrador", true, null));
+            rolRepository.save(new Rol("ADMIN", "Administrador", true, null));
         }
         if (rolRepository.findByNombre("EMPLEADO").isEmpty()) {
-            rolRepository.save(new Rol(null, "EMPLEADO", "Empleado", true, null));
+            rolRepository.save(new Rol("EMPLEADO", "Empleado", true, null));
         }
 
         // Crear admin inicial si no existe

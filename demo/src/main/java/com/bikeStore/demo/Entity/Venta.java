@@ -8,14 +8,16 @@ import java.util.List;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import com.bikeStore.demo.Entity.base.BaseEntity;
+
 @Entity
 @Table(name= "Venta")
 @Data
-public class Venta {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id_venta")
-    private UUID idVenta;
+@AttributeOverride(name = "id", column = @Column(name = "id_venta"))
+public class Venta extends BaseEntity {
+
+    public UUID getIdVenta() { return super.getId(); }
+    public void setIdVenta(UUID id) { super.setId(id); }
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
