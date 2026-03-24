@@ -23,7 +23,7 @@ services:
       retries: 5
 
   app:
-    image: stiven77/bikestore:v1        # ← tu imagen de Docker Hub
+    image: stiven77/bikestore:v2        # ← tu imagen de Docker Hub
     container_name: bikestore-app
     restart: always
     ports:
