@@ -1,6 +1,5 @@
 package com.bikeStore.demo.Entity;
 import jakarta.persistence.*;
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;

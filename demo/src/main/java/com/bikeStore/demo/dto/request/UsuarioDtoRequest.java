@@ -13,7 +13,7 @@ public record UsuarioDtoRequest(
         @Size(min = 6, message = "La contraseña debe tener minimo 6 caracteres")
         String password,
 
-        @NotBlank(message = "El documento es oblogatorio")
+        @NotBlank(message = "El documento es obligatorio")
         @Size(min = 5,max = 20)
         String document,
 

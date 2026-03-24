@@ -1,64 +1,74 @@
 package com.bikeStore.demo.service.impl;
 
+import com.bikeStore.demo.Entity.*;
+import com.bikeStore.demo.Enums.TipoSalida;
 import com.bikeStore.demo.dto.request.VentaDtoRequest;
 import com.bikeStore.demo.dto.response.VentaDtoResponse;
-import com.bikeStore.demo.Entity.Bicicleta;
-import com.bikeStore.demo.Entity.DetalleVenta;
-import com.bikeStore.demo.Entity.Usuario;
-import com.bikeStore.demo.Entity.Venta;
 import com.bikeStore.demo.mapper.VentaMapper;
 import com.bikeStore.demo.repository.BicicletaRepository;
+import com.bikeStore.demo.repository.SalidaRepository;
 import com.bikeStore.demo.repository.UsuarioRepository;
 import com.bikeStore.demo.repository.VentaRepository;
-import com.bikeStore.demo.service.IMovimientoService;
 import com.bikeStore.demo.service.IVentaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class VentaServiceImpl implements IVentaService {
 
-    @Autowired private VentaRepository ventaRepo;
-    @Autowired private UsuarioRepository usuarioRepo;
-    @Autowired private BicicletaRepository biciRepo;
-    @Autowired private VentaMapper ventaMapper;
-    @Autowired private IMovimientoService movimientoService;
+    private final VentaRepository ventaRepo;
+    private final UsuarioRepository usuarioRepo;
+    private final BicicletaRepository biciRepo;
+    private final SalidaRepository salidaRepo;
+    private final VentaMapper ventaMapper;
 
     @Override
     @Transactional
     public VentaDtoResponse registrarVenta(VentaDtoRequest request) {
-
-        // 1. Validar Usuario
-        UUID usuarioId = UUID.fromString(request.idUsuario().toString());
+        // 1. Validar usuario
+        UUID usuarioId = request.idUsuario();
         Usuario usuario = usuarioRepo.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + usuarioId));
 
         Venta venta = ventaMapper.toEntity(request);
         venta.setUsuario(usuario);
         venta.setTotalVenta(BigDecimal.ZERO);
         venta.setDetalles(new ArrayList<>());
 
-        // 2. Procesar Detalles
+        if (venta.getFecha() == null) {
+            venta.setFecha(LocalDateTime.now());
+        }
+
+        // 2. Procesar cada detalle
         request.detalles().forEach(detReq -> {
-            UUID biciId = UUID.fromString(detReq.idBicicleta().toString());
+            Bicicleta bici = biciRepo.findById(detReq.idBicicleta())
+                    .orElseThrow(() -> new RuntimeException("Bicicleta no encontrada con ID: " + detReq.idBicicleta()));
 
-            Bicicleta bici = biciRepo.findById(biciId)
-                    .orElseThrow(() -> new RuntimeException("Bicicleta no encontrada"));
-
-            // Validar stock suficiente antes de proceder
-            if (bici.getStock() < detReq.cantidad()) {
-                throw new RuntimeException(
-                    "Stock insuficiente para la bicicleta '" + bici.getCodigo() +
-                    "'. Stock actual: " + bici.getStock() +
-                    ", cantidad solicitada: " + detReq.cantidad()
-                );
+            // Validar bicicleta activa
+            if (!bici.isActivo()) {
+                throw new RuntimeException("La bicicleta '" + bici.getCodigo() + "' está inactiva. No se puede vender.");
             }
 
+            // Validar stock suficiente
+            if (bici.getStock() < detReq.cantidad()) {
+                throw new RuntimeException("Stock insuficiente para '" + bici.getCodigo()
+                        + "'. Stock actual: " + bici.getStock()
+                        + ", cantidad solicitada: " + detReq.cantidad());
+            }
+
+            // Descontar stock
+            bici.setStock(bici.getStock() - detReq.cantidad());
+            biciRepo.save(bici);
+
+            // Crear detalle de venta
             DetalleVenta detalle = new DetalleVenta();
             detalle.setVenta(venta);
             detalle.setBicicleta(bici);
@@ -68,28 +78,50 @@ public class VentaServiceImpl implements IVentaService {
             BigDecimal subtotal = detalle.getPrecioUnitario().multiply(new BigDecimal(detalle.getCantidad()));
             detalle.setTotalDetalle(subtotal);
 
-            // Descontar stock
-            bici.setStock(bici.getStock() - detReq.cantidad());
-            biciRepo.save(bici);
-
             venta.getDetalles().add(detalle);
             venta.setTotalVenta(venta.getTotalVenta().add(subtotal));
         });
 
-        // 3. Guardar la Venta (cascade guarda los DetalleVenta)
+        // 3. Guardar venta (cascade guarda los detalles)
         Venta ventaGuardada = ventaRepo.save(venta);
 
-        // 4. Registrar un Movimiento de SALIDA por cada bicicleta vendida
-        //    Se hace DESPUES de guardar la venta para tener el ID de venta disponible
-        ventaGuardada.getDetalles().forEach(detalle ->
-            movimientoService.registrarSalida(
-                detalle.getBicicleta(),
-                usuario,
-                detalle.getCantidad(),
-                ventaGuardada
-            )
-        );
+        // 4. Crear registros de Salida (tipo VENTA) por cada detalle
+        for (DetalleVenta detalle : ventaGuardada.getDetalles()) {
+            Salida salida = new Salida();
+            salida.setBicicleta(detalle.getBicicleta());
+            salida.setDetalleVenta(detalle);
+            salida.setUsuario(usuario);
+            salida.setTipoSalida(TipoSalida.VENTA);
+            salida.setCantidad(detalle.getCantidad());
+            salida.setObservacion("Venta registrada");
+            salida.setFecha(ventaGuardada.getFecha());
+            salidaRepo.save(salida);
+        }
 
         return ventaMapper.toResponseDTO(ventaGuardada);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VentaDtoResponse> listarTodas() {
+        return ventaRepo.findAll().stream()
+                .map(ventaMapper::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public VentaDtoResponse buscarPorId(UUID id) {
+        Venta venta = ventaRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada con ID: " + id));
+        return ventaMapper.toResponseDTO(venta);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VentaDtoResponse> listarPorUsuario(UUID idUsuario) {
+        return ventaRepo.findByUsuarioId(idUsuario).stream()
+                .map(ventaMapper::toResponseDTO)
+                .toList();
     }
 }

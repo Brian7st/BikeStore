@@ -5,29 +5,30 @@ import com.bikeStore.demo.dto.response.DetalleVentaDtoResponse;
 import com.bikeStore.demo.mapper.DetalleVentaMapper;
 import com.bikeStore.demo.repository.DetalleVentaRepository;
 import com.bikeStore.demo.service.IDetalleVentaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
-public class DetalleVentaServiceImpl implements IDetalleVentaService{
-    @Autowired
-    private DetalleVentaRepository detalleRepo;
+@RequiredArgsConstructor
+public class DetalleVentaServiceImpl implements IDetalleVentaService {
 
-    @Autowired
-    private DetalleVentaMapper detalleMapper;
+    private final DetalleVentaRepository detalleRepo;
+    private final DetalleVentaMapper detalleMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<DetalleVentaDtoResponse> listarTodos() {
         return detalleRepo.findAll().stream()
                 .map(detalleMapper::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DetalleVentaDtoResponse buscarPorId(UUID id) {
         DetalleVenta detalle = detalleRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Detalle de venta no encontrado"));
@@ -35,9 +36,10 @@ public class DetalleVentaServiceImpl implements IDetalleVentaService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DetalleVentaDtoResponse> listarPorVenta(UUID idVenta) {
-        return detalleRepo.findByVenta_IdVenta(idVenta).stream()
+        return detalleRepo.findByVenta_Id(idVenta).stream()
                 .map(detalleMapper::toResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -6,9 +6,9 @@ import com.bikeStore.demo.dto.response.RolDtoResponse;
 import com.bikeStore.demo.mapper.RolMapper;
 import com.bikeStore.demo.repository.RolRepository;
 import com.bikeStore.demo.service.IRolService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,45 +20,47 @@ public class RolServiceImpl implements IRolService {
     private final RolRepository rolRepository;
     private final RolMapper rolMapper;
 
-    //Crear rol
+    @Override
     @Transactional
-    public RolDtoResponse crear(RolDtoRequest dto){
-        if (rolRepository.existsByNombre(dto.nombre())){
+    public RolDtoResponse crear(RolDtoRequest dto) {
+        if (rolRepository.existsByNombre(dto.nombre())) {
             throw new RuntimeException("Ya existe el rol: " + dto.nombre());
         }
         Rol rol = rolMapper.toEntity(dto);
         return rolMapper.toResponseDto(rolRepository.save(rol));
     }
 
-    //listar todos
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    public List<RolDtoResponse> listarTodos(){
+    @Override
+    @Transactional(readOnly = true)
+    public List<RolDtoResponse> listarTodos() {
         return rolRepository.findAll()
                 .stream()
                 .map(rolMapper::toResponseDto)
                 .toList();
     }
-    //Buscar por ID
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+
+    @Override
+    @Transactional(readOnly = true)
     public RolDtoResponse buscarPorId(UUID id) {
         Rol rol = rolRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + id));
         return rolMapper.toResponseDto(rol);
     }
-    // Buscar por nombre
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+
+    @Override
+    @Transactional(readOnly = true)
     public RolDtoResponse buscarPorNombre(String nombre) {
         Rol rol = rolRepository.findByNombre(nombre)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado: " + nombre));
         return rolMapper.toResponseDto(rol);
     }
-    // Actualizar descripción ────────────────────────────────────────────────
-    @org.springframework.transaction.annotation.Transactional
+
+    @Override
+    @Transactional
     public RolDtoResponse actualizar(UUID id, RolDtoRequest dto) {
         Rol rol = rolRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + id));
 
-        // No se puede cambiar el nombre a uno que ya existe
         if (!rol.getNombre().equals(dto.nombre()) && rolRepository.existsByNombre(dto.nombre())) {
             throw new RuntimeException("Ya existe el rol: " + dto.nombre());
         }
@@ -66,7 +68,8 @@ public class RolServiceImpl implements IRolService {
         rolMapper.updateFromDto(dto, rol);
         return rolMapper.toResponseDto(rolRepository.save(rol));
     }
-    //Activar / Desactivar rol
+
+    @Override
     @Transactional
     public RolDtoResponse cambiarEstado(UUID id, boolean activo) {
         Rol rol = rolRepository.findById(id)
