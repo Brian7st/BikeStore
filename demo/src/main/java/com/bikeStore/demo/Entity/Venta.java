@@ -6,15 +6,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.math.BigDecimal;
+import java.util.UUID;
+
+import com.bikeStore.demo.Entity.base.BaseEntity;
+
 @Entity
 @Table(name= "Venta")
 @Data
-public class Venta {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@AttributeOverride(name = "id", column = @Column(name = "id_venta"))
+public class Venta extends BaseEntity {
 
-    @Column(name = "id_venta")
-    private Long idVenta;
+    public UUID getIdVenta() { return super.getId(); }
+    public void setIdVenta(UUID id) { super.setId(id); }
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)
