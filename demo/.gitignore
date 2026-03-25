@@ -1,0 +1,37 @@
+# --- Archivos de construcción (Maven/Java) ---
+target/
+**/target/
+.mvn/wrapper/maven-wrapper.jar
+HELP.md
+
+# --- IntelliJ IDEA ---
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# --- VS Code ---
+.vscode/
+
+# --- Eclipse / STS ---
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# --- NetBeans ---
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+# --- Security Analysis ---
+SECURITY_FIXES.md
+GUIA_ESTUDIO_CODIGO.md
+DETALLE_TECNICO_PROYECTO.md
