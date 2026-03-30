@@ -6,6 +6,7 @@ import com.bikeStore.demo.dto.request.BicicletaUpdateDto;
 import com.bikeStore.demo.dto.response.BicicletaDtoResponse;
 
 import com.bikeStore.demo.service.IBicicletaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class BicicletaController implements IBicicletaSwagger {
 
     @Override
     @PostMapping
-    public ResponseEntity<BicicletaDtoResponse> crearBicicleta(@RequestBody BicicletaDtoRequest dtoRequest){
+    public ResponseEntity<BicicletaDtoResponse> crearBicicleta(@Valid @RequestBody BicicletaDtoRequest dtoRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.crearBicicleta(dtoRequest));
     }
 
@@ -43,13 +44,13 @@ public class BicicletaController implements IBicicletaSwagger {
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<BicicletaDtoResponse> actualizarBicicleta(UUID id,@RequestBody BicicletaUpdateDto request){
+    public ResponseEntity<BicicletaDtoResponse> actualizarBicicleta(@PathVariable UUID id, @Valid @RequestBody BicicletaUpdateDto request){
         return ResponseEntity.ok(service.actualizarBicicleta(id, request));
     }
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarBicicleta(UUID id){
+    public ResponseEntity<Void> eliminarBicicleta(@PathVariable UUID id){
         service.eliminarBicicleta(id);
         return ResponseEntity.noContent().build();
     }

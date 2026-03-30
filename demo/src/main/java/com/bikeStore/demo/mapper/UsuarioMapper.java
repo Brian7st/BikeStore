@@ -24,6 +24,7 @@ public interface UsuarioMapper {
     @Mapping(source = "token", target = "token") // El token viene como parámetro externo
     LoginResponseDTO toAuthResponse(Usuario usuario, String token);
 
+    @Mapping(source = "rol.nombre", target = "rolNombre")
     UsuarioDtoResponse toResponseDto(Usuario usuario);
 
 }

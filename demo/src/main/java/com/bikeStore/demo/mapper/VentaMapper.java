@@ -6,6 +6,7 @@ import com.bikeStore.demo.Entity.Venta;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring",
+        uses = DetalleVentaMapper.class,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface VentaMapper {

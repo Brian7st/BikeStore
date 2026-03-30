@@ -8,5 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface DetalleVentaRepository extends JpaRepository<DetalleVenta, UUID> {
-    List<DetalleVenta> findByVenta_IdVenta(UUID idVenta);
+    List<DetalleVenta> findByVenta_Id(UUID idVenta);
 }

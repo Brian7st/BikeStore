@@ -11,10 +11,9 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/detalles-venta")
+@RequestMapping("/api/detalles-venta")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
-public class DetalleVentaController implements IDetalleVentaSwagger{
+public class DetalleVentaController implements IDetalleVentaSwagger {
     private final IDetalleVentaService service;
 
     @Override
