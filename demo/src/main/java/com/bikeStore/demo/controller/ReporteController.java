@@ -1,0 +1,115 @@
+package com.bikeStore.demo.controller;
+
+import com.bikeStore.demo.service.ReporteExportService;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+
+@RestController
+@RequestMapping("/api/reportes")
+@RequiredArgsConstructor
+public class ReporteController {
+
+    private final ReporteExportService reporteExportService;
+
+    private static final MediaType EXCEL_MEDIA_TYPE = MediaType.parseMediaType(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    // ======================== VENTAS ========================
+
+    @GetMapping("/ventas/export/pdf")
+    public ResponseEntity<byte[]> exportarVentasPdf(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+
+        byte[] pdf = reporteExportService.generarPdfVentas(
+                fechaInicio.atStartOfDay(),
+                fechaFin.atTime(23, 59, 59)
+        );
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte-ventas.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @GetMapping("/ventas/export/excel")
+    public ResponseEntity<byte[]> exportarVentasExcel(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+
+        byte[] excel = reporteExportService.generarExcelVentas(
+                fechaInicio.atStartOfDay(),
+                fechaFin.atTime(23, 59, 59)
+        );
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte-ventas.xlsx")
+                .contentType(EXCEL_MEDIA_TYPE)
+                .body(excel);
+    }
+
+    // ======================== INVENTARIO ========================
+
+    @GetMapping("/inventario/export/pdf")
+    public ResponseEntity<byte[]> exportarInventarioPdf() {
+        byte[] pdf = reporteExportService.generarPdfInventario();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte-inventario.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @GetMapping("/inventario/export/excel")
+    public ResponseEntity<byte[]> exportarInventarioExcel() {
+        byte[] excel = reporteExportService.generarExcelInventario();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte-inventario.xlsx")
+                .contentType(EXCEL_MEDIA_TYPE)
+                .body(excel);
+    }
+
+    // ======================== MOVIMIENTOS ========================
+
+    @GetMapping("/movimientos/export/pdf")
+    public ResponseEntity<byte[]> exportarMovimientosPdf(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+
+        byte[] pdf = reporteExportService.generarPdfMovimientos(
+                fechaInicio.atStartOfDay(),
+                fechaFin.atTime(23, 59, 59)
+        );
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte-movimientos.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
+    }
+
+    @GetMapping("/movimientos/export/excel")
+    public ResponseEntity<byte[]> exportarMovimientosExcel(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+
+        byte[] excel = reporteExportService.generarExcelMovimientos(
+                fechaInicio.atStartOfDay(),
+                fechaFin.atTime(23, 59, 59)
+        );
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte-movimientos.xlsx")
+                .contentType(EXCEL_MEDIA_TYPE)
+                .body(excel);
+    }
+}

@@ -12,4 +12,6 @@ public interface VentaRepository extends JpaRepository<Venta, UUID> {
     List<Venta> findByFecha(LocalDateTime fecha);
 
     List<Venta> findByUsuarioId(UUID idUsuario);
+
+    List<Venta> findByFechaBetween(LocalDateTime inicio, LocalDateTime fin);
 }
