@@ -17,13 +17,13 @@ services:
     networks:
       - bikestore-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot1234"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot1234" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   app:
-    image: stiven77/bikestore:v5        # ← tu imagen de Docker Hub
+    image: stiven77/bikestore:v6
     container_name: bikestore-app
     restart: always
     ports:

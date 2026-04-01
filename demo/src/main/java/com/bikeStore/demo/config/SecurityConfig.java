@@ -55,6 +55,7 @@ public class SecurityConfig {
                                 "/error"
                         ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/reportes/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
