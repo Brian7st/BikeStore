@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/reportes")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class ReporteController {
 
     private final ReporteExportService reporteExportService;
@@ -29,6 +31,8 @@ public class ReporteController {
     public ResponseEntity<byte[]> exportarVentasPdf(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+
+        validarRangoFechas(fechaInicio, fechaFin);
 
         byte[] pdf = reporteExportService.generarPdfVentas(
                 fechaInicio.atStartOfDay(),
@@ -45,6 +49,8 @@ public class ReporteController {
     public ResponseEntity<byte[]> exportarVentasExcel(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+
+        validarRangoFechas(fechaInicio, fechaFin);
 
         byte[] excel = reporteExportService.generarExcelVentas(
                 fechaInicio.atStartOfDay(),
@@ -86,6 +92,8 @@ public class ReporteController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
+        validarRangoFechas(fechaInicio, fechaFin);
+
         byte[] pdf = reporteExportService.generarPdfMovimientos(
                 fechaInicio.atStartOfDay(),
                 fechaFin.atTime(23, 59, 59)
@@ -102,6 +110,8 @@ public class ReporteController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
+        validarRangoFechas(fechaInicio, fechaFin);
+
         byte[] excel = reporteExportService.generarExcelMovimientos(
                 fechaInicio.atStartOfDay(),
                 fechaFin.atTime(23, 59, 59)
@@ -111,5 +121,14 @@ public class ReporteController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte-movimientos.xlsx")
                 .contentType(EXCEL_MEDIA_TYPE)
                 .body(excel);
+    }
+
+    private void validarRangoFechas(LocalDate inicio, LocalDate fin) {
+        if (inicio.getYear() < 2020) {
+            throw new RuntimeException("La fecha de inicio no puede ser anterior al año 2020.");
+        }
+        if (fin.isBefore(inicio)) {
+            throw new RuntimeException("La fecha final no puede ser menor a la fecha de inicio.");
+        }
     }
 }
