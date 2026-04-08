@@ -41,13 +41,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 @Service
 @RequiredArgsConstructor
@@ -71,9 +77,6 @@ public class ReporteExportService {
     private static final Color BRAND_DANGER_LIGHT  = new Color(253, 232, 234);
     /** Borde de celdas */
     private static final Color CELL_BORDER         = new Color(222, 226, 230);
-
-    // ======================== LOGO ========================
-    private static final String LOGO_RESOURCE = "/static/logo-bikeshop.png";
 
     private final VentaRepository      ventaRepository;
     private final BicicletaRepository  bicicletaRepository;
@@ -502,6 +505,82 @@ public class ReporteExportService {
     // ======================== PDF LAYOUT HELPERS ========================
 
     /**
+     * Genera el logo BikeShop como PNG en memoria usando Java2D.
+     * Reproduce el SVG del logo: icono de bicicleta + texto "BikeShop" en azul corporativo.
+     */
+    private byte[] buildLogoPng() throws IOException {
+        int iconSize = 42;
+        float scale = iconSize / 24f;
+        int imgWidth = 190;
+        int imgHeight = 52;
+        int padTop = (imgHeight - iconSize) / 2;
+
+        BufferedImage img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
+        java.awt.Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        java.awt.Color blue = new java.awt.Color(0, 87, 168);
+        g.setColor(blue);
+        g.setStroke(new BasicStroke(1.8f * scale, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+        // Escalar el viewBox SVG (0 0 24 24) al tamaño del icono
+        g.translate(padTop, padTop);
+        g.scale(scale, scale);
+
+        // Ruedas
+        g.draw(new Ellipse2D.Float(2.5f, 12.5f, 6f, 6f));   // cx=5.5 cy=15.5 r=3
+        g.draw(new Ellipse2D.Float(15.5f, 12.5f, 6f, 6f));  // cx=18.5 cy=15.5 r=3
+
+        // M5.5 15.5 L9 9 H14
+        GeneralPath p1 = new GeneralPath();
+        p1.moveTo(5.5f, 15.5f); p1.lineTo(9f, 9f); p1.lineTo(14f, 9f);
+        g.draw(p1);
+
+        // M14 9 L18.5 15.5
+        GeneralPath p2 = new GeneralPath();
+        p2.moveTo(14f, 9f); p2.lineTo(18.5f, 15.5f);
+        g.draw(p2);
+
+        // M9 15.5 L11.5 9
+        GeneralPath p3 = new GeneralPath();
+        p3.moveTo(9f, 15.5f); p3.lineTo(11.5f, 9f);
+        g.draw(p3);
+
+        // M5.5 15.5 H11.5
+        GeneralPath p4 = new GeneralPath();
+        p4.moveTo(5.5f, 15.5f); p4.lineTo(11.5f, 15.5f);
+        g.draw(p4);
+
+        // M13 6 H16.5 L14 9  (manubrio)
+        GeneralPath p5 = new GeneralPath();
+        p5.moveTo(13f, 6f); p5.lineTo(16.5f, 6f); p5.lineTo(14f, 9f);
+        g.draw(p5);
+
+        // cx=13 cy=5.5 r=0.5 fill (headset)
+        g.setStroke(new BasicStroke(0));
+        g.fill(new Ellipse2D.Float(12.5f, 5f, 1f, 1f));
+
+        // Reset transform para el texto
+        g.setTransform(new AffineTransform());
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Texto "BikeShop"
+        java.awt.Font font = new java.awt.Font("SansSerif", java.awt.Font.BOLD, 26);
+        g.setFont(font);
+        g.setColor(blue);
+        java.awt.FontMetrics fm = g.getFontMetrics();
+        int textY = (imgHeight + fm.getAscent() - fm.getDescent()) / 2;
+        g.drawString("BikeShop", iconSize + 8, textY);
+
+        g.dispose();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(img, "PNG", baos);
+        return baos.toByteArray();
+    }
+
+    /**
      * Encabezado corporativo: logo a la izquierda, título + subtítulo a la derecha,
      * seguido de una barra azul separadora.
      */
@@ -517,16 +596,10 @@ public class ReporteExportService {
         PdfPCell logoCell = new PdfPCell();
         logoCell.setBorder(Rectangle.NO_BORDER);
         logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-        try (InputStream is = getClass().getResourceAsStream(LOGO_RESOURCE)) {
-            if (is != null) {
-                byte[] bytes = is.readAllBytes();
-                Image logo = Image.getInstance(bytes);
-                logo.scaleToFit(150f, 55f);
-                logoCell.addElement(logo);
-            } else {
-                Font fb = new Font(Font.HELVETICA, 16, Font.BOLD, BRAND_BLUE);
-                logoCell.addElement(new Paragraph("BikeShop", fb));
-            }
+        try {
+            Image logo = Image.getInstance(buildLogoPng());
+            logo.scaleToFit(150f, 55f);
+            logoCell.addElement(logo);
         } catch (Exception ex) {
             Font fb = new Font(Font.HELVETICA, 16, Font.BOLD, BRAND_BLUE);
             logoCell.addElement(new Paragraph("BikeShop", fb));
