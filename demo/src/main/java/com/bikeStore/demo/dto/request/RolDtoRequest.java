@@ -13,6 +13,7 @@ public record RolDtoRequest(
         String nombre,
 
         @Size(max = 100, message = "La descripcion no puede superar los 100 caracteres")
+        @Pattern(regexp = "^[\\p{L}\\p{N}\\s.,'\\-]*$", message = "La descripción contiene caracteres no permitidos")
         String descripcion
 ) {
 }

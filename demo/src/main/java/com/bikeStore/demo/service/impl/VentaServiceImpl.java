@@ -45,6 +45,13 @@ public class VentaServiceImpl implements IVentaService {
 
         if (venta.getFecha() == null) {
             venta.setFecha(LocalDateTime.now());
+        } else {
+            if (venta.getFecha().getYear() < 2020) {
+                throw new RuntimeException("La fecha de la venta no puede ser anterior al año 2020. Por favor, verificá los datos enviados.");
+            }
+            if (venta.getFecha().toLocalDate().isAfter(java.time.LocalDate.now())) {
+                throw new RuntimeException("Locura cósmica: No podés registrar una venta en el futuro.");
+            }
         }
 
         // 2. Procesar cada detalle
