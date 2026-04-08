@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,9 +24,9 @@ public class BicicletaController implements IBicicletaSwagger {
 
     private final IBicicletaService service;
 
-
     @Override
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BicicletaDtoResponse> crearBicicleta(@Valid @RequestBody BicicletaDtoRequest dtoRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(service.crearBicicleta(dtoRequest));
     }
@@ -44,12 +45,14 @@ public class BicicletaController implements IBicicletaSwagger {
 
     @Override
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BicicletaDtoResponse> actualizarBicicleta(@PathVariable UUID id, @Valid @RequestBody BicicletaUpdateDto request){
         return ResponseEntity.ok(service.actualizarBicicleta(id, request));
     }
 
     @Override
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminarBicicleta(@PathVariable UUID id){
         service.eliminarBicicleta(id);
         return ResponseEntity.noContent().build();

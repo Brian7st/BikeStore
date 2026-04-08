@@ -9,6 +9,7 @@ public class DetalleVentaDtoResponse {
     private UUID idDetalleVenta;
     private UUID idBicicleta;
     private String nombreBicicleta;
+    private String marcaBicicleta;
     private Integer cantidad;
     private BigDecimal precioUnitario;
     private BigDecimal totalDetalle;

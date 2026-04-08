@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ProveedorController implements IProveedorSwagger {
 
     @Override
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProveedorDtoResponse> crear(@Valid @RequestBody ProveedorDtoRequest dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(proveedorService.crear(dto));
     }
@@ -40,6 +42,7 @@ public class ProveedorController implements IProveedorSwagger {
 
     @Override
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProveedorDtoResponse> actualizar(
             @PathVariable UUID id,
             @Valid @RequestBody ProveedorDtoRequest dto) {
@@ -48,12 +51,14 @@ public class ProveedorController implements IProveedorSwagger {
 
     @Override
     @PatchMapping("/{id}/activar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProveedorDtoResponse> activar(@PathVariable UUID id) {
         return ResponseEntity.ok(proveedorService.cambiarEstado(id, true));
     }
 
     @Override
     @PatchMapping("/{id}/desactivar")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProveedorDtoResponse> desactivar(@PathVariable UUID id) {
         return ResponseEntity.ok(proveedorService.cambiarEstado(id, false));
     }
