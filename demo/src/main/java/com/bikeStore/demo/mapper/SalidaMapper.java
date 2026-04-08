@@ -13,5 +13,6 @@ public interface SalidaMapper {
     @Mapping(source = "bicicleta.marca", target = "marcaBicicleta")
     @Mapping(source = "usuario.id", target = "idUsuario")
     @Mapping(source = "usuario.userName", target = "nombreUsuario")
+    @Mapping(target = "idVenta", expression = "java(salida.getDetalleVenta() != null && salida.getDetalleVenta().getVenta() != null ? salida.getDetalleVenta().getVenta().getIdVenta() : null)")
     SalidaDtoResponse toResponseDto(Salida salida);
 }

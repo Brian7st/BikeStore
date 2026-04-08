@@ -12,6 +12,7 @@ public record SalidaDtoResponse(
         String marcaBicicleta,
         UUID idUsuario,
         String nombreUsuario,
+        UUID idVenta,
         TipoSalida tipoSalida,
         Integer cantidad,
         String observacion,

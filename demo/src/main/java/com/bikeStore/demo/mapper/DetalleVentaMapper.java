@@ -18,7 +18,8 @@ public interface DetalleVentaMapper {
     @Mapping(target = "totalDetalle",   ignore = true)
     DetalleVenta toEntity(DetalleVentaDtoRequest request);
 
-    @Mapping(source = "bicicleta.id",    target = "idBicicleta")   // ✅ "id" no "idBicicleta"
-    @Mapping(source = "bicicleta.marca", target = "nombreBicicleta")
+    @Mapping(source = "bicicleta.id", target = "idBicicleta")
+    @Mapping(source = "bicicleta.modelo", target = "nombreBicicleta")
+    @Mapping(source = "bicicleta.marca", target = "marcaBicicleta")
     DetalleVentaDtoResponse toResponseDTO(DetalleVenta entidad);
 }
