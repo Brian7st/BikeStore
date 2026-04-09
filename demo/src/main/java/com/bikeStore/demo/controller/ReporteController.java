@@ -1,5 +1,6 @@
 package com.bikeStore.demo.controller;
 
+import com.bikeStore.demo.service.FacturaPdfService;
 import com.bikeStore.demo.service.ReporteExportService;
 
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/reportes")
@@ -20,6 +22,7 @@ import java.time.LocalDate;
 public class ReporteController {
 
     private final ReporteExportService reporteExportService;
+    private final FacturaPdfService    facturaPdfService;
 
     private static final MediaType EXCEL_MEDIA_TYPE = MediaType.parseMediaType(
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -121,6 +124,24 @@ public class ReporteController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=reporte-movimientos.xlsx")
                 .contentType(EXCEL_MEDIA_TYPE)
                 .body(excel);
+    }
+
+    // ======================== FACTURAS ========================
+
+    @GetMapping("/facturas/{idVenta}/export/pdf")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLEADO')")
+    public ResponseEntity<?> exportarFacturaPdf(@PathVariable UUID idVenta) {
+        try {
+            byte[] pdf = facturaPdfService.generarPdfFactura(idVenta);
+            String num = "FAC-" + idVenta.toString().replace("-", "").substring(24).toUpperCase();
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=factura-" + num + ".pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdf);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     private void validarRangoFechas(LocalDate inicio, LocalDate fin) {

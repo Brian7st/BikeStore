@@ -63,6 +63,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/proveedores").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/proveedores/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/proveedores/**").hasRole("ADMIN")
+                        // Facturas → ADMIN y EMPLEADO
+                        .requestMatchers("/api/reportes/facturas/**").hasAnyRole("ADMIN", "EMPLEADO")
                         // Reportes → solo ADMIN
                         .requestMatchers("/api/reportes/**").hasRole("ADMIN")
 

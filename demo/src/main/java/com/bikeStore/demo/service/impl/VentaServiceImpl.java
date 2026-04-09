@@ -9,6 +9,7 @@ import com.bikeStore.demo.repository.BicicletaRepository;
 import com.bikeStore.demo.repository.SalidaRepository;
 import com.bikeStore.demo.repository.UsuarioRepository;
 import com.bikeStore.demo.repository.VentaRepository;
+import com.bikeStore.demo.service.FacturaEmailService;
 import com.bikeStore.demo.service.IVentaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,11 +25,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class VentaServiceImpl implements IVentaService {
 
-    private final VentaRepository ventaRepo;
-    private final UsuarioRepository usuarioRepo;
+    private final VentaRepository    ventaRepo;
+    private final UsuarioRepository  usuarioRepo;
     private final BicicletaRepository biciRepo;
-    private final SalidaRepository salidaRepo;
-    private final VentaMapper ventaMapper;
+    private final SalidaRepository   salidaRepo;
+    private final VentaMapper        ventaMapper;
+    private final FacturaEmailService facturaEmailService;
 
     @Override
     @Transactional
@@ -103,6 +105,12 @@ public class VentaServiceImpl implements IVentaService {
             salida.setObservacion("Venta registrada");
             salida.setFecha(ventaGuardada.getFecha());
             salidaRepo.save(salida);
+        }
+
+        // Envío de factura por correo (async — no bloquea la respuesta)
+        if (request.emailCliente() != null && !request.emailCliente().isBlank()) {
+            facturaEmailService.enviarFacturaPorCorreo(
+                    ventaGuardada.getId(), request.emailCliente());
         }
 
         return ventaMapper.toResponseDTO(ventaGuardada);

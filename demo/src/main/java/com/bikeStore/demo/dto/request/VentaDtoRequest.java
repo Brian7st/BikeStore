@@ -17,5 +17,8 @@ public record VentaDtoRequest(
         @NotNull(message = "La lista de detalles es obligatoria")
         @NotEmpty(message = "La venta debe tener al menos un producto")
         @Valid
-        List<DetalleVentaDtoRequest> detalles) {
+        List<DetalleVentaDtoRequest> detalles,
+
+        // Opcional: si se provee, se envía la factura PDF por correo al cliente
+        String emailCliente) {
 }
