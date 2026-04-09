@@ -11,7 +11,7 @@ services:
       MYSQL_USER: bikeuser
       MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - bikestore-data:/var/lib/mysql
     networks:
@@ -23,7 +23,7 @@ services:
       retries: 5
 
   app:
-    image: stiven77/bikestore:v10
+    image: stiven77/bikestore:v12
     container_name: bikestore-app
     restart: always
     ports:

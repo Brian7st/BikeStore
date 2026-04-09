@@ -52,7 +52,7 @@ public class FacturaPdfService {
     // ======================== PÚBLICO ========================
 
     public byte[] generarPdfFactura(UUID idVenta) {
-        Venta venta = ventaRepository.findById(idVenta)
+        Venta venta = ventaRepository.findByIdWithDetalles(idVenta)
                 .orElseThrow(() -> new IllegalArgumentException("Venta no encontrada: " + idVenta));
 
         String numFactura = "FAC-" + idVenta.toString().replace("-", "").substring(24).toUpperCase();

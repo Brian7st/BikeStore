@@ -14,6 +14,8 @@ import com.bikeStore.demo.service.IVentaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -107,10 +109,17 @@ public class VentaServiceImpl implements IVentaService {
             salidaRepo.save(salida);
         }
 
-        // Envío de factura por correo (async — no bloquea la respuesta)
+        // Envío de factura por correo — se ejecuta DESPUÉS del commit (@Async solo)
+        // para que la venta ya esté en la DB cuando el thread la busque.
         if (request.emailCliente() != null && !request.emailCliente().isBlank()) {
-            facturaEmailService.enviarFacturaPorCorreo(
-                    ventaGuardada.getId(), request.emailCliente());
+            final UUID ventaId     = ventaGuardada.getId();
+            final String emailDest = request.emailCliente();
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    facturaEmailService.enviarFacturaPorCorreo(ventaId, emailDest);
+                }
+            });
         }
 
         return ventaMapper.toResponseDTO(ventaGuardada);
